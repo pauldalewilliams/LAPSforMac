@@ -53,23 +53,23 @@ passLength=""
 # END HARDCODED VALUES
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 4 AND, IF SO, ASSIGN TO "apiUser"
-if [ "$4" != "" ] && [ "$apiUser" == "" ];then
+if [ "$4" != "" ] && [ "$apiUser" == "" ]; then
     apiUser=$4
 fi
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 5 AND, IF SO, ASSIGN TO "apiPass"
-if [ "$5" != "" ] && [ "$apiPass" == "" ];then
+if [ "$5" != "" ] && [ "$apiPass" == "" ]; then
     apiPass=$5
 fi
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 6 AND, IF SO, ASSIGN TO "resetUser"
-if [ "$6" != "" ] && [ "$resetUser" == "" ];then
+if [ "$6" != "" ] && [ "$resetUser" == "" ]; then
     resetUser=$6
 fi
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 7 AND, IF SO, ASSIGN TO "passLength"
 # ELSE ASSIGN DEFAULT VALUE OF 12
-if [ "$7" != "" ] && [ "$passLength" == "" ];then
+if [ "$7" != "" ] && [ "$passLength" == "" ]; then
     passLength=$7
 else
     passLength=12
@@ -121,21 +121,21 @@ ScriptLogging "======== Starting LAPS Update ========"
 ScriptLogging "Checking parameters."
 
 # Verify parameters are present
-if [ "$apiUser" == "" ];then
+if [ "$apiUser" == "" ]; then
     ScriptLogging "Error:  The parameter 'API Username' is blank.  Please specify a user."
     echo "Error:  The parameter 'API Username' is blank.  Please specify a user."
     ScriptLogging "======== Aborting LAPS Update ========"
     exit 1
 fi
 
-if [ "$apiPass" == "" ];then
+if [ "$apiPass" == "" ]; then
     ScriptLogging "Error:  The parameter 'API Password' is blank.  Please specify a password."
     echo "Error:  The parameter 'API Password' is blank.  Please specify a password."
     ScriptLogging "======== Aborting LAPS Update ========"
     exit 1
 fi
 
-if [ "$resetUser" == "" ];then
+if [ "$resetUser" == "" ]; then
     ScriptLogging "Error:  The parameter 'User to Reset' is blank.  Please specify a user to reset."
     echo "Error:  The parameter 'User to Reset' is blank.  Please specify a user to reset."
     ScriptLogging "======== Aborting LAPS Update ========"
@@ -145,7 +145,7 @@ fi
 # Verify resetUser is a local user on the computer
 checkUser=`dseditgroup -o checkmember -m $resetUser localaccounts | awk '{ print $1 }'`
 
-if [[ "$checkUser" = "yes" ]];then
+if [[ "$checkUser" = "yes" ]]; then
     echo "$resetUser is a local user on the Computer"
 else
     echo "Error: $checkUser is not a local user on the Computer!"
@@ -178,7 +178,7 @@ ScriptLogging "JAMF Binary is $jamf_binary"
 CheckOldPassword (){
 ScriptLogging "Verifying password stored in LAPS."
 
-if [ "$oldPass" == "" ];then
+if [ "$oldPass" == "" ]; then
     ScriptLogging "No Password is stored in LAPS."
     echo "No Password is stored in LAPS."
     oldPass=None
@@ -189,7 +189,7 @@ fi
 
 passwdA=`dscl /Local/Default -authonly $resetUser $oldPass`
 
-if [ "$passwdA" == "" ];then
+if [ "$passwdA" == "" ]; then
     ScriptLogging "Password stored in LAPS is correct for $resetUser."
     echo "Password stored in LAPS is correct for $resetUser."
 else
@@ -202,7 +202,7 @@ fi
 # Update the User Password
 RunLAPS (){
 ScriptLogging "Running LAPS..."
-if [ "$oldPass" == "" ];then
+if [ "$oldPass" == "" ]; then
     ScriptLogging "Current password not available, proceeding with forced update for $resetUser."
     echo "Current password not available, proceeding with forced update."
     $jamf_binary resetPassword -username $resetUser -password $newPass
@@ -218,7 +218,7 @@ CheckNewPassword (){
 ScriptLogging "Verifying new password for $resetUser."
 passwdB=`dscl /Local/Default -authonly $resetUser $newPass`
 
-if [ "$passwdB" == "" ];then
+if [ "$passwdB" == "" ]; then
     ScriptLogging "New password for $resetUser is verified."
     echo "New password for $resetUser is verified."
 else
@@ -240,7 +240,7 @@ LAPSpass=$(curl -s -f -u $apiUser:$apiPass -H "Accept: application/xml" $apiURL/
 
 ScriptLogging "Verifying LAPS password for $resetUser."
 passwdC=`dscl /Local/Default -authonly $resetUser $LAPSpass`
-if [ "$passwdC" == "" ];then
+if [ "$passwdC" == "" ]; then
     ScriptLogging "LAPS password for $resetUser is verified."
     echo "LAPS password for $resetUser is verified."
 else
