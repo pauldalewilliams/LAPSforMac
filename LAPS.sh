@@ -44,9 +44,13 @@
 ####################################################################################################
 
 # HARDCODED VALUES SET HERE
+passLength=12
+apiURL="https://jss.acme.com:8443"
+LogLocation="/Library/Logs/Casper_LAPS.log"
 apiUser=""
 apiPass=""
 resetUser=""
+# END HARDCODED VALUES
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 4 AND, IF SO, ASSIGN TO "apiUser"
 if [ "$4" != "" ] && [ "$apiUser" == "" ];then
@@ -63,33 +67,38 @@ if [ "$6" != "" ] && [ "$resetUser" == "" ];then
 resetUser=$6
 fi
 
-apiURL="https://jss.acme.com:8443"
-LogLocation="/Library/Logs/Casper_LAPS.log"
-
-newPass=$(openssl rand -base64 10 | tr -d OoIi1lLS | head -c12;echo)
-####################################################################
-#
-#            ┌─── openssl is used to create
-#            │	a random Base64 string
-#            │                    ┌── remove ambiguous characters
-#            │                    │
-# ┌──────────┴──────────┐	  ┌───┴────────┐
-# openssl rand -base64 10 | tr -d OoIi1lLS | head -c12;echo
-#                                            └──────┬─────┘
-#                                                   │
-#             prints the first 12 characters  ──────┘
-#             of the randomly generated string
-#
 ####################################################################################################
 #
 # SCRIPT CONTENTS - DO NOT MODIFY BELOW THIS LINE
 #
 ####################################################################################################
 
+# Generate a random password from a character set.
+# Remove ambiguous characters
+# Run it through grep to make sure:
+# 1. No repeated characters
+# 2. No sequences of 3 or more characters
+# 3. Has at least one number, symbol, uppercase letter, and lowercase letter
+# This ensures it will meet complexity requirements for passcodes.
+RandPass () {
+	echo "$(LC_ALL=C tr -dc 'A-Za-z0-9!@#&_=<>' </dev/urandom |
+	tr -d 'O0l1L' | head -c $passLength |
+	grep -Ev '(.)\1+' |
+	grep -iv 'abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn' |
+	grep -iv 'mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz' |
+	grep -v '012|123|234|345|456|567|678|789' |
+	grep '[0-9]' | grep '[!@$&_=<>,]' | grep '[A-Z]' | grep '[a-z]')"
+}
+
+# Keep generating passwords until we get one that passes the requirements
+newPass=$(RandPass)
+while [[ "$newPass" == "" ]]; do
+    newPass=$(RandPass)
+done
+
 udid=$(/usr/sbin/system_profiler SPHardwareDataType | /usr/bin/awk '/Hardware UUID:/ { print $3 }')
 xmlString="<?xml version=\"1.0\" encoding=\"UTF-8\"?><computer><extension_attributes><extension_attribute><name>LAPS</name><value>$newPass</value></extension_attribute></extension_attributes></computer>"
 extAttName="\"LAPS\""
-oldPass=$(curl -s -f -u $apiUser:$apiPass -H "Accept: application/xml" $apiURL/JSSResource/computers/udid/$udid/subset/extension_attributes | xpath "//extension_attribute[name=$extAttName]" 2>&1 | awk -F'<value>|</value>' '{print $2}')
 
 # Logging Function for reporting actions
 ScriptLogging(){
@@ -137,6 +146,9 @@ else
 fi
 
 ScriptLogging "Parameters Verified."
+
+# Retrieve old password from JSS
+oldPass=$(curl -s -f -u $apiUser:$apiPass -H "Accept: application/xml" $apiURL/JSSResource/computers/udid/$udid/subset/extension_attributes | xpath "//extension_attribute[name=$extAttName]" 2>&1 | awk -F'<value>|</value>' '{print $2}')
 
 # Identify the location of the jamf binary for the jamf_binary variable.
 CheckBinary (){
