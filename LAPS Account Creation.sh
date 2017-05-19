@@ -41,7 +41,11 @@
 #
 ####################################################################################################
 
+# TODO:  Remove support for FileVault authorization and create account in this script as a hidden user
+
 # HARDCODED VALUES SET HERE
+apiURL="https://jss.unl.edu:8443"
+LogLocation="/Library/Logs/Casper_LAPS.log"
 apiUser=""
 apiPass=""
 LAPSuser=""
@@ -52,47 +56,44 @@ LAPSaccountEventFVE=""
 LAPSrunEvent=""
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 4 AND, IF SO, ASSIGN TO "apiUser"
-if [ "$4" != "" ] && [ "$apiUser" == "" ];then
-apiUser=$4
+if [ "$4" != "" ] && [ "$apiUser" == "" ]; then
+    apiUser=$4
 fi
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 5 AND, IF SO, ASSIGN TO "apiPass"
-if [ "$5" != "" ] && [ "$apiPass" == "" ];then
-apiPass=$5
+if [ "$5" != "" ] && [ "$apiPass" == "" ]; then
+    apiPass=$5
 fi
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 6 AND, IF SO, ASSIGN TO "LAPSuser"
-if [ "$6" != "" ] && [ "$LAPSuser" == "" ];then
-LAPSuser=$6
+if [ "$6" != "" ] && [ "$LAPSuser" == "" ]; then
+    LAPSuser=$6
 fi
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 7 AND, IF SO, ASSIGN TO "LAPSuserDisplay"
-if [ "$7" != "" ] && [ "$LAPSuserDisplay" == "" ];then
-LAPSuserDisplay=$7
+if [ "$7" != "" ] && [ "$LAPSuserDisplay" == "" ]; then
+    LAPSuserDisplay=$7
 fi
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 8 AND, IF SO, ASSIGN TO "newPass"
-if [ "$8" != "" ] && [ "$newPass" == "" ];then
-newPass=$8
+if [ "$8" != "" ] && [ "$newPass" == "" ]; then
+    newPass=$8
 fi
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 9 AND, IF SO, ASSIGN TO "LAPSaccountEvent"
-if [ "$9" != "" ] && [ "$LAPSaccountEvent" == "" ];then
-LAPSaccountEvent=$9
+if [ "$9" != "" ] && [ "$LAPSaccountEvent" == "" ]; then
+    LAPSaccountEvent=$9
 fi
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 10 AND, IF SO, ASSIGN TO "LAPSaccountEventFVE"
-if [ "${10}" != "" ] && [ "$LAPSaccountEventFVE" == "" ];then
-LAPSaccountEventFVE="${10}"
+if [ "${10}" != "" ] && [ "$LAPSaccountEventFVE" == "" ]; then
+    LAPSaccountEventFVE="${10}"
 fi
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 11 AND, IF SO, ASSIGN TO "LAPSrunEvent"
-if [ "${11}" != "" ] && [ "$LAPSrunEvent" == "" ];then
-LAPSrunEvent="${11}"
+if [ "${11}" != "" ] && [ "$LAPSrunEvent" == "" ]; then
+    LAPSrunEvent="${11}"
 fi
-
-apiURL="https://jss.unl.edu:8443"
-LogLocation="/Library/Logs/Casper_LAPS.log"
 
 ####################################################################################################
 #
@@ -118,56 +119,75 @@ ScriptLogging "======== Starting LAPS Account Creation ========"
 ScriptLogging "Checking parameters."
 
 # Verify parameters are present
-if [ "$apiUser" == "" ];then
+if [ "$apiUser" == "" ]; then
     ScriptLogging "Error:  The parameter 'API Username' is blank.  Please specify a user."
     echo "Error:  The parameter 'API Username' is blank.  Please specify a user."
     ScriptLogging "======== Aborting LAPS Account Creation ========"
     exit 1
 fi
 
-if [ "$apiPass" == "" ];then
+if [ "$apiPass" == "" ]; then
     ScriptLogging "Error:  The parameter 'API Password' is blank.  Please specify a password."
     echo "Error:  The parameter 'API Password' is blank.  Please specify a password."
     ScriptLogging "======== Aborting LAPS Account Creation ========"
     exit 1
 fi
 
-if [ "$LAPSuser" == "" ];then
+if [ "$LAPSuser" == "" ]; then
     ScriptLogging "Error:  The parameter 'LAPS Account Shortname' is blank.  Please specify a user to create."
     echo "Error:  The parameter 'LAPS Account Shortname' is blank.  Please specify a user to create."
     ScriptLogging "======== Aborting LAPS Account Creation ========"
     exit 1
 fi
 
-if [ "$LAPSuserDisplay" == "" ];then
+if [ "$LAPSuserDisplay" == "" ]; then
     ScriptLogging "Error:  The parameter 'LAPS Account Displayname' is blank.  Please specify a user to create."
     echo "Error:  The parameter 'LAPS Account Displayname' is blank.  Please specify a user to create."
     ScriptLogging "======== Aborting LAPS Account Creation ========"
     exit 1
 fi
 
-if [ "$newPass" == "" ];then
+if [ "$newPass" == "" ]; then
     ScriptLogging "Error:  The parameter 'LAPS Password Seed' is blank.  Please specify a password to seed."
     echo "Error:  The parameter 'LAPS Password Seed' is blank.  Please specify a password to seed."
     ScriptLogging "======== Aborting LAPS Account Creation ========"
     exit 1
 fi
 
-if [ "$LAPSaccountEvent" == "" ];then
+#Verify newPass meets complexity requirements
+# 1. No repeated characters
+# 2. No sequences of 3 or more characters
+# 3. Has at least one number, symbol, uppercase letter, and lowercase letter
+CheckPass () {
+    echo "$newPass" |
+    grep -Ev '(.)\1+' |
+    grep -iv 'abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn' |
+    grep -iv 'mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz' |
+    grep -v '012|123|234|345|456|567|678|789' |
+    grep '[0-9]' | grep '[!@$&_=<>,]' | grep '[A-Z]' | grep '[a-z]'
+}
+if [ "$(CheckPass)" == ""]; then
+    ScriptLogging "Error:  The parameter 'LAPS Password Seed' does not meet complexity requirements.  Please use a different password."
+    echo "Error:  The parameter 'LAPS Password Seed' does not meet complexity requirements.  Please use a different password."
+    ScriptLogging "======== Aborting LAPS Account Creation ========"
+    exit 1
+fi
+
+if [ "$LAPSaccountEvent" == "" ]; then
     ScriptLogging "Error:  The parameter 'LAPS Account Event' is blank.  Please specify a Custom LAPS Account Event."
     echo "Error:  The parameter 'LAPS Account Event' is blank.  Please specify a Custom LAPS Account Event."
     ScriptLogging "======== Aborting LAPS Account Creation ========"
     exit 1
 fi
 
-if [ "$LAPSaccountEventFVE" == "" ];then
+if [ "$LAPSaccountEventFVE" == "" ]; then
     ScriptLogging "Error:  The parameter 'LAPS Account Event FVE' is blank.  Please specify a Custom LAPS Account Event."
     echo "Error:  The parameter 'LAPS Account Event FVE' is blank.  Please specify a Custom FVE LAPS Account Event."
     ScriptLogging "======== Aborting LAPS Account Creation ========"
     exit 1
 fi
 
-if [ "$LAPSrunEvent" == "" ];then
+if [ "$LAPSrunEvent" == "" ]; then
     ScriptLogging "Error:  The parameter 'LAPS Run Event' is blank.  Please specify a Custom LAPS Run Event."
     echo "Error:  The parameter 'LAPS Run Event' is blank.  Please specify a Custom LAPS Run Event."
     ScriptLogging "======== Aborting LAPS Account Creation ========"
@@ -177,7 +197,7 @@ fi
 # Verify resetUser is not a local user on the computer
 checkUser=`dseditgroup -o checkmember -m $LAPSuser localaccounts | awk '{ print $1 }'`
 
-if [[ "$checkUser" = "yes" ]];then
+if [[ "$checkUser" = "yes" ]]; then
     ScriptLogging "Error: $LAPSuser already exists as a local user on the Computer"
     echo "Error: $LAPSuser already exists as a local user on the Computer"
     ScriptLogging "======== Aborting LAPS Account Creation ========"
@@ -195,11 +215,11 @@ CheckBinary (){
 jamf_binary=`/usr/bin/which jamf`
 
 if [[ "$jamf_binary" == "" ]] && [[ -e "/usr/sbin/jamf" ]] && [[ ! -e "/usr/local/bin/jamf" ]]; then
-jamf_binary="/usr/sbin/jamf"
+    jamf_binary="/usr/sbin/jamf"
 elif [[ "$jamf_binary" == "" ]] && [[ ! -e "/usr/sbin/jamf" ]] && [[ -e "/usr/local/bin/jamf" ]]; then
-jamf_binary="/usr/local/bin/jamf"
+    jamf_binary="/usr/local/bin/jamf"
 elif [[ "$jamf_binary" == "" ]] && [[ -e "/usr/sbin/jamf" ]] && [[ -e "/usr/local/bin/jamf" ]]; then
-jamf_binary="/usr/local/bin/jamf"
+    jamf_binary="/usr/local/bin/jamf"
 fi
 
 ScriptLogging "JAMF Binary is $jamf_binary"
@@ -209,7 +229,7 @@ ScriptLogging "JAMF Binary is $jamf_binary"
 CreateLAPSaccount (){
     ScriptLogging "Creating LAPS Account..."
     echo "Creating LAPS Account..."
-    if [ "$FVEstatus" == "Off" ];then
+    if [ "$FVEstatus" == "Off" ]; then
         $jamf_binary policy -event $LAPSaccountEvent
         ScriptLogging "LAPS Account Created..."
         echo "LAPS Account Created..."
@@ -242,7 +262,7 @@ FVEcheck (){
 FVEverify (){
     ScriptLogging "Checking FileVault Status..."
     echo "Checking FileVault Status..."
-    if [ "$FVEstatus" == "On" ];then
+    if [ "$FVEstatus" == "On" ]; then
         ScriptLogging "FileVault is enabled, checking $LAPSuserDisplay..."
         echo "FileVault is enabled, checking $LAPSuserDisplay..."
         FVEcheck
