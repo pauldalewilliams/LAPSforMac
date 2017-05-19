@@ -42,6 +42,7 @@
 ####################################################################################################
 
 # TODO:  Remove support for FileVault authorization and create account in this script as a hidden user
+# See here:  https://www.jamf.com/jamf-nation/discussions/6438/best-way-to-create-hidden-admin-account
 
 # HARDCODED VALUES SET HERE
 apiURL="https://jss.unl.edu:8443"
