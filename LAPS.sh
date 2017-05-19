@@ -44,27 +44,35 @@
 ####################################################################################################
 
 # HARDCODED VALUES SET HERE
-passLength=12
 apiURL="https://jss.acme.com:8443"
 LogLocation="/Library/Logs/Casper_LAPS.log"
 apiUser=""
 apiPass=""
 resetUser=""
+passLength=""
 # END HARDCODED VALUES
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 4 AND, IF SO, ASSIGN TO "apiUser"
 if [ "$4" != "" ] && [ "$apiUser" == "" ];then
-apiUser=$4
+    apiUser=$4
 fi
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 5 AND, IF SO, ASSIGN TO "apiPass"
 if [ "$5" != "" ] && [ "$apiPass" == "" ];then
-apiPass=$5
+    apiPass=$5
 fi
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 6 AND, IF SO, ASSIGN TO "resetUser"
 if [ "$6" != "" ] && [ "$resetUser" == "" ];then
-resetUser=$6
+    resetUser=$6
+fi
+
+# CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 7 AND, IF SO, ASSIGN TO "passLength"
+# ELSE ASSIGN DEFAULT VALUE OF 12
+if [ "$7" != "" ] && [ "$passLength" == "" ];then
+    passLength=$7
+else
+    passLength=12
 fi
 
 ####################################################################################################
@@ -156,11 +164,11 @@ CheckBinary (){
 jamf_binary=`/usr/bin/which jamf`
 
 if [[ "$jamf_binary" == "" ]] && [[ -e "/usr/sbin/jamf" ]] && [[ ! -e "/usr/local/bin/jamf" ]]; then
-jamf_binary="/usr/sbin/jamf"
+    jamf_binary="/usr/sbin/jamf"
 elif [[ "$jamf_binary" == "" ]] && [[ ! -e "/usr/sbin/jamf" ]] && [[ -e "/usr/local/bin/jamf" ]]; then
-jamf_binary="/usr/local/bin/jamf"
+    jamf_binary="/usr/local/bin/jamf"
 elif [[ "$jamf_binary" == "" ]] && [[ -e "/usr/sbin/jamf" ]] && [[ -e "/usr/local/bin/jamf" ]]; then
-jamf_binary="/usr/local/bin/jamf"
+    jamf_binary="/usr/local/bin/jamf"
 fi
 
 ScriptLogging "JAMF Binary is $jamf_binary"
