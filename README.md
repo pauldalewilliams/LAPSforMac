@@ -146,16 +146,16 @@ The current version of the LAPS script is available [here](https://github.com/un
 
 *The diagram below details how the newPass function works, if you wish to modify the password string.*
 
-			   ┌─── openssl is used to create 
-			   │	  a random Base64 string
-			   │				      ┌── remove ambiguous characters
-			   │			          │
+		   ┌─── openssl is used to create 
+		   │	  a random Base64 string
+		   │		      ┌── remove ambiguous characters
+		   │	              │
 	┌──────────┴──────────┐	  ┌───┴────────┐
 	openssl rand -base64 10 | tr -d OoIi1lLS | head -c12;echo
-											   └──────┬─────┘
-											   		  │
-	        	prints the first 12 characters	──────┘
-	          	of the randomly generated string
+						   └──────┬─────┘
+					   		  │
+	          prints the first 12 characters ─────────┘
+	          of the randomly generated string
 
 		
 				
@@ -220,7 +220,7 @@ This policy randomizes the local admin accounts password on a specified interval
 			API Username: {APIusername}
 			API Password: {APIpassword}
 			LAPS Account Shortname: {AccountShortName}
-##10. Casper policy to call the LAPS Account Creation script.
+## 10. Casper policy to call the LAPS Account Creation script.
 	Name: LAPS – Create Account
 	Scope: {AccountShortName} LAPS Account Missing
 	Trigger: Startup, Check-in, Enrollment (You may also decide to add a manual trigger for advanced workflows)
@@ -236,5 +236,5 @@ This policy randomizes the local admin accounts password on a specified interval
 			LAPS Account Event: createLAPSaccount-{AccountShortName}
 			LAPS Account Event FVE: createLAPSaccountFVE-{AccountShortName}
 			LAPS Run Event: runLAPS
-##11. LAPS Log
+## 11. LAPS Log
 A log is written to each Mac run LAPS for troubleshooting. The default location for this log is ```/Library/Logs/Casper_LAPS.log``` which can be modified if desired.
