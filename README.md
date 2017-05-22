@@ -12,12 +12,10 @@ As written currently, LAPS has several components that are integrated with the J
 3.  Two Smart Groups used to identify Computers with/without the local admin account.
 4.  The LAPS Account Creation script.
 5.  The LAPS script.
-6.  A Casper policy that creates the local Account, via a manual trigger.
-7.  A Casper policy that creates the local Account, for FileVault enabled Macs, via a manual trigger.
-8.  A Casper policy that randomizes the Local Admin account password using a manual trigger, after initial account creation, by running a script.
-9.  A Casper policy that randomizes the Local Admin account password on a specified interval, by running a script.
-10. A Casper policy that calls LAPS Account Creation script.
-11. A local log for LAPS on each Mac.
+6.  A Casper policy that randomizes the Local Admin account password using a manual trigger, after initial account creation, by running a script.
+7.  A Casper policy that randomizes the Local Admin account password on a specified interval, by running a script.
+8.  A Casper policy that calls LAPS Account Creation script.
+9.  A local log for LAPS on each Mac.
 
 ## Admin Defined Variables
 ```{APIusername}```  
@@ -74,21 +72,19 @@ Replace ```{AccountShortName}``` with the name of the local admin account you wi
 	2. Display Name: {AccountShortName} LAPS User Present
 		Criteria: Local User Accounts, has, {AccountShortName}
 
-
-
 ## 4. LAPS Account Creation script
     Display Name: LAPS Account Creation
     Options:
     	Priority: Before
     	Parameter Labels:
-    		Parameter 4: API Username
-			Parameter 5: API Password
-			Parameter 6: LAPS Account Shortname
-			Parameter 7: LAPS Account Display Name
-			Parameter 8: LAPS Password Seed
-			Parameter 9: LAPS Account Event
-			Parameter 10: LAPS Account Event FVE
-			Parameter 11: LAPS Run Event
+		Parameter 4: API Username
+		Parameter 5: API Password
+		Parameter 6: LAPS Account Shortname
+		Parameter 7: LAPS Account Display Name
+		Parameter 8: LAPS Password Seed
+		Parameter 9: Hide LAPS User
+		Parameter 10: LAPS Run Event
+
 ### Script
 The current version of the LAPS Account Creation script is available [here](https://github.com/pauldalewilliams/LAPSforMac/blob/master/LAPS%20Account%20Creation.sh).
 
@@ -98,18 +94,15 @@ The current version of the LAPS Account Creation script is available [here](http
 1. Verifies that all variable parameters have been populated within Casper.  
 2. Verifies the location of the JAMF binary.  
 3. Populates the Local Admin account password seed into the LAPS extension attribute within Casper.  
-4. Checks if FileVault 2 in enabled on the Mac then calls Casper to create the local admin account accordingly. 
-	• If FileVault 2 is not enabled, a regular admin account will be created on the Mac.
-	• If FileVault 2 is enabled, a FileVault 2 enabled admin account will be created on the Mac, the script will then verify that the new admin account is listed as FileVault enabled.  
+4. Creates the account using the JAMF binary. 
 5. After the account has been created the LAPS script is called to randomize the initial password seed.
 ```
+
 ### Variables
 ```apiURL``` Put the fully qualified domain name address of your Casper server, including port number  
 *(Your port is usually 8443 or 443; change as appropriate for your installation)*
 
 ```LogLocation``` Put the preferred location of the log file for this script. If you don't have a preference, using the default setting of ```/Library/Logs/Casper_Laps.log``` should be fine.
-
-
 
 ## 5. LAPS script
 	Display Name: LAPS
@@ -131,11 +124,9 @@ The current version of the LAPS script is available [here](https://github.com/pa
 2. Verifies the location of the JAMF binary.  
 3. Verifies that a password is stored in the LAPS extension attribuite within Casper for this Mac.
 	• If no password is found or it is invalid, the script will proceed with a brute force reset of the password.
-	• If a password is valid, the script will reset the password and update the local Keychain and FileVault 2.
+	• If a password is valid, the script will reset the password and update the local Keychain.
 4. After reseting the password the script will then update the LAPS extension attribute for the Mac in Casper and verify that the new entry in Casper is valid on the local Mac.
-
 ```
-
 
 ### Variables
 ```apiURL``` Put the fully qualified domain name address of your Casper server, including port number  
@@ -157,43 +148,7 @@ The current version of the LAPS script is available [here](https://github.com/pa
     		grep '[0-9]' | grep '[!@$&_=<>,]' | grep '[A-Z]' | grep '[a-z]')" # Verify password contains at least one of each type
 	}
 
-		
-				
-## 6. Casper LAPS Account Creation Policy
-	Display Name: LAPS for {AccountShortName} – Create Local Account – Manual Trigger
-	Scope: All Computers
-	Trigger:
-		Custom: createLAPSaccount-{AccountShortName}
-	Frequency: Ongoing
-	Local Accounts:
-		Action: Create Account
-		Username: {AccountShortName}
-		Full Name: {AccountDisplayName}
-		Password: {AccountInitialPassword}
-		Verify Password: {AccountInitialPassword}
-		Home Directory Location: /Users/{AccountShortName}/
-		Password Hint: (Not Used)
-		Allow user to administer computer: Yes
-		Enable user for FileVault 2: No	
-## 7. Casper LAPS Account Creation Policy for FileVault 2 Enabled Macs
-This is a separate policy to eliminate false positve errors that accumulate in the logs if the Mac is using FileVault 2.
-
-	Display Name: LAPS for {AccountShortName} – Create Local Account FVE – Manual Trigger
-	Scope: All Computers
-	Trigger:
-		Custom: createLAPSaccountFVE-{AccountShortName}
-	Frequency: Ongoing
-	Local Accounts:
-		Action: Create Account
-		Username: {AccountShortName}
-		Full Name: {AccountDisplayName}
-		Password: {AccountInitialPassword}
-		Verify Password: {AccountInitialPassword}
-		Home Directory Location: /Users/{AccountShortName}/
-		Password Hint: (Not Used)
-		Allow user to administer computer: Yes
-		Enable user for FileVault 2: Yes
-## 8. Casper LAPS Policy – Manual Trigger
+## 6. Casper LAPS Policy – Manual Trigger
 This policy randomizes the local admin accounts password after initial account creation.
 
 	Display Name: LAPS for {AccountShortName} - Manual Trigger
@@ -208,7 +163,8 @@ This policy randomizes the local admin accounts password after initial account c
 			API Password: {APIpassword}
 			LAPS Account Shortname: {AccountShortName}
 			Password Length: {PasswordLength}
-## 9. Casper LAPS Policy
+
+## 7. Casper LAPS Policy
 This policy randomizes the local admin accounts password on a specified interval.
 
 	Display Name: LAPS for {AccountShortName}
@@ -222,10 +178,11 @@ This policy randomizes the local admin accounts password on a specified interval
 			API Password: {APIpassword}
 			LAPS Account Shortname: {AccountShortName}
 			Password Length:  {PasswordLength}
-## 10. Casper policy to call the LAPS Account Creation script.
+
+## 8. Casper policy to call the LAPS Account Creation script.
 	Name: LAPS – Create Account
 	Scope: {AccountShortName} LAPS Account Missing
-	Trigger: Startup, Check-in, Enrollment (You may also decide to add a manual trigger for advanced workflows)
+	Trigger: Check-in, Enrollment (You may also decide to add a manual trigger for advanced workflows)
 	Frequency: Ongoing
 	Scripts: LAPS Account Creation
 		Priority: Before
@@ -235,8 +192,8 @@ This policy randomizes the local admin accounts password on a specified interval
 			LAPS Account Shortname: {AccountShortName}
 			LAPS Account Display Name: {AccountDisplayName}
 			LAPS Password Seed: {AccountInitialPassword}
-			LAPS Account Event: createLAPSaccount-{AccountShortName}
-			LAPS Account Event FVE: createLAPSaccountFVE-{AccountShortName}
+			Hide LAPS User: 0 to show or 1 to hide
 			LAPS Run Event: runLAPS
-## 11. LAPS Log
+
+## 9. LAPS Log
 A log is written to each Mac run LAPS for troubleshooting. The default location for this log is ```/Library/Logs/Casper_LAPS.log``` which can be modified if desired.
