@@ -209,7 +209,7 @@ if [ "$oldPass" == "" ]; then
 else
     ScriptLogging "Updating password for $resetUser."
     echo "Updating password for $resetUser."
-    $jamf_binary resetPassword -updateLoginKeychain -username $resetUser -oldPassword $oldPass -password $newPass
+    $jamf_binary changePassword -username $resetUser -oldPassword $oldPass -password $newPass
 fi
 }
 
