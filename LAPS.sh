@@ -99,7 +99,7 @@ RandPass () {
 }
 
 # Keep generating passwords until we get one that passes the requirements
-newPass=$(RandPass)
+newPass="$(RandPass)"
 while [[ "$newPass" == "" ]]; do
     newPass="$(RandPass)"
 done
