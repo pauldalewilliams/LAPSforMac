@@ -157,7 +157,7 @@ CheckPass () {
     grep -v '012|123|234|345|456|567|678|789' |
     grep '[0-9]' | grep '[!@$&_=<>,]' | grep '[A-Z]' | grep '[a-z]'
 }
-if [ "$(CheckPass)" == ""]; then
+if [ "$(CheckPass)" == "" ]; then
     ScriptLogging "Error:  The parameter 'LAPS Password Seed' does not meet complexity requirements.  Please use a different password."
     echo "Error:  The parameter 'LAPS Password Seed' does not meet complexity requirements.  Please use a different password."
     ScriptLogging "======== Aborting LAPS Account Creation ========"
