@@ -155,7 +155,7 @@ CheckPass () {
     grep -iv 'abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn' |
     grep -iv 'mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz' |
     grep -v '012|123|234|345|456|567|678|789' |
-    grep '[0-9]' | grep '[!@$&_=,]' | grep '[A-Z]' | grep '[a-z]'
+    grep '[0-9]' | grep '[!@$_=,]' | grep '[A-Z]' | grep '[a-z]'
 }
 if [ "$(CheckPass)" == "" ]; then
     ScriptLogging "Error:  The parameter 'LAPS Password Seed' does not meet complexity requirements.  Please use a different password."
