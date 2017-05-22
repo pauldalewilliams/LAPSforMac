@@ -119,7 +119,7 @@ The current version of the LAPS Account Creation script is available [here](http
 		Parameter 4: API Username
 		Parameter 5: API Password
 		Parameter 6: LAPS Account Shortname
-        	Parameter 7: Password Length (default is 12)
+		Parameter 7: Password Length (default is 12)
 		
 ### Script
 The current version of the LAPS script is available [here](https://github.com/unl/LAPSforMac/blob/master/LAPS.sh).
@@ -208,7 +208,7 @@ This policy randomizes the local admin accounts password after initial account c
 			API Username: {APIusername}
 			API Password: {APIpassword}
 			LAPS Account Shortname: {AccountShortName}
-            		Password Length: {PasswordLength}
+			Password Length: {PasswordLength}
 ## 9. Casper LAPS Policy
 This policy randomizes the local admin accounts password on a specified interval.
 
@@ -222,7 +222,7 @@ This policy randomizes the local admin accounts password on a specified interval
 			API Username: {APIusername}
 			API Password: {APIpassword}
 			LAPS Account Shortname: {AccountShortName}
-            		Password Length:  {PasswordLength}
+			Password Length:  {PasswordLength}
 ## 10. Casper policy to call the LAPS Account Creation script.
 	Name: LAPS – Create Account
 	Scope: {AccountShortName} LAPS Account Missing
