@@ -46,7 +46,7 @@ This will be the seed password for creating your Local Admin account on your Mac
     Display Name: LAPS (This name is hardcoded into the scripts, if you change this name update the scripts accordingly)  
     Description: This attribute will display the current Local Admin Password of the device.  
     Data Type: String  
-    Inventory Display: General  
+    Inventory Display: Extension Attributes  
     Input Type: Text Field  
     Recon Display: User and Location (Not Used)  
 
@@ -55,7 +55,7 @@ This will be the seed password for creating your Local Admin account on your Mac
 ## 2. Casper API User
 
     Username: {APIusername}
-    Access Level: Full Access
+    Access Level: Full Access or Site
     Privilege Set: Custom
     Access Status: Enabled
     Full Name: {APIusername}
@@ -63,7 +63,6 @@ This will be the seed password for creating your Local Admin account on your Mac
     Password: {APIpassword}
     Privileges:
 		JSS Objects:
-			Computer Extension Attributes: RU
 			Computers: RU
 			Users: U
 
