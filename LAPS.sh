@@ -101,11 +101,11 @@ RandPass () {
 # Keep generating passwords until we get one that passes the requirements
 newPass=$(RandPass)
 while [[ "$newPass" == "" ]]; do
-    newPass=$(RandPass)
+    newPass="$(RandPass)"
 done
 
 udid=$(/usr/sbin/system_profiler SPHardwareDataType | /usr/bin/awk '/Hardware UUID:/ { print $3 }')
-xmlString="<?xml version=\"1.0\" encoding=\"UTF-8\"?><computer><extension_attributes><extension_attribute><name>LAPS</name><value>$newPass</value></extension_attribute></extension_attributes></computer>"
+xmlString="<?xml version=\"1.0\" encoding=\"UTF-8\"?><computer><extension_attributes><extension_attribute><name>LAPS</name><value>${newPass}</value></extension_attribute></extension_attributes></computer>"
 extAttName="\"LAPS\""
 
 # Logging Function for reporting actions
