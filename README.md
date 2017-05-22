@@ -111,7 +111,7 @@ The current version of the LAPS Account Creation script is available [here](http
 ```LogLocation``` Put the preferred location of the log file for this script. If you don't have a preference, using the default setting of ```/Library/Logs/Casper_Laps.log``` should be fine.
 
 ## 5. LAPS script
-	Display Name: LAPS
+	Display Name: LAPS Password Reset
 	Options:
 	Priority: After
 	Parameter Labels:
@@ -162,7 +162,7 @@ This policy randomizes the local admin accounts password after initial account c
 	Trigger: 
 		Custom: runLAPS
 	Frequency: Once every day (Change this value to meet your institution's needs)
-	Scripts: LAPS
+	Scripts: LAPS Password Reset
 		Priority: After
 		Parameter Values
 			API Username: {APIusername}
@@ -177,7 +177,7 @@ This policy randomizes the local admin accounts password on a specified interval
 	Scope: LAPS {AccountShortName} Account Present
 	Trigger: Recurring Check-in
 	Frequency: Once every day (Change this value to meet your institution's needs)
-	Scripts: LAPS
+	Scripts: LAPS Password Reset
 		Priority: After
 		Parameter Values
 			API Username: {APIusername}
