@@ -221,7 +221,8 @@ CreateLAPSaccount (){
     if [ "$hideLAPSuser" == "0" ]; then
         $jamf_binary createAccount -username $LAPSuser -realname $LAPSuserDisplay -password $newPass -suppressSetupAssistant
     elif [ "$hideLAPSuser" == "1" ]; then
-        $jamf_binary createAccount -username $LAPSuser -realname $LAPSuserDisplay -password $newPass -suppressSetupAssistant -hiddenUser
+        $jamf_binary createAccount -username $LAPSuser -realname $LAPSuserDisplay -password $newPass -suppressSetupAssistant
+        dscl . -create /Users/$LAPSuser IsHidden 1
     fi
     ScriptLogging "LAPS Account Created..."
     echo "LAPS Account Created..."
