@@ -219,9 +219,9 @@ CreateLAPSaccount (){
     ScriptLogging "Creating LAPS Account..."
     echo "Creating LAPS Account..."
     if [ "$hideLAPSuser" == "0" ]; then
-        $jamf_binary createAccount -username $LAPSuser -realname $LAPSuserDisplay -password $newPass -suppressSetupAssistant
+        $jamf_binary createAccount -username $LAPSuser -realname $LAPSuserDisplay -password $newPass -suppressSetupAssistant -admin
     elif [ "$hideLAPSuser" == "1" ]; then
-        $jamf_binary createAccount -username $LAPSuser -realname $LAPSuserDisplay -password $newPass -suppressSetupAssistant
+        $jamf_binary createAccount -username $LAPSuser -realname $LAPSuserDisplay -password $newPass -suppressSetupAssistant -admin
         dscl . -create /Users/$LAPSuser IsHidden 1
     fi
     ScriptLogging "LAPS Account Created..."
