@@ -9,7 +9,7 @@ Original Notes:
 
 Current Notes:
 
-I have adapted this project from Phil Redfern's work.  I have removed support for enabling the account as a FileVault2 user.  I have added a check for password complexity to meet our Passcode config profile's requirements.  I've implemented the account creation directly into the script rather than calling another policy. I have also added an option to hide the user.
+I have adapted this project from Phil Redfern's work for the University of Nebraska-Lincoln.  I have removed support for enabling the account as a FileVault2 user.  I have added a check for password complexity to meet our Passcode config profile's requirements.  I've implemented the account creation directly into the script rather than calling another policy. I have also added an option to hide the user.
 
 As written currently, LAPS has several components that are integrated with the JAMF Casper Suite:
 
