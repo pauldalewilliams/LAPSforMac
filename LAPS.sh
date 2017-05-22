@@ -96,8 +96,15 @@ RandPass () {
     grep -iv 'mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz' |
     grep -iv 'zyx|yxw|xwv|wvu|vut|uts|tsr|srq|rqp|qpo|pon|onm' |
     grep -iv 'nml|mlk|lkj|kji|jih|ihg|hgf|gfe|fed|edc|dcb|cba' |
+    grep -iv 'aba|bab|bcb|cbc|cdc|dcd|ded|ede|efe|fef|fgf|gfg' |
+    grep -iv 'ghg|hgh|hih|ihi|iji|jij|jkj|kjk|klk|lkl|lml|mlm' |
+    grep -iv 'mnm|nmn|non|ono|opo|pop|pqp|qpq|qrq|rqr|rsr|srs' |
+    grep -iv 'sts|tst|tut|utu|uvu|vuv|vwv|wvw|wxw|xwx|xyx|yxy' |
+    grep -iv 'yzy|zyz' |
     grep -v '012|123|234|345|456|567|678|789' |
     grep -v '987|876|765|654|543|432|321|210' |
+    grep -v '010|101|121|212|232|323|343|434|454' |
+    grep -v '545|565|656|676|767|787|878|898|989' |
     grep '[0-9]' | grep '[!@#_=]' | grep '[A-Z]' | grep '[a-z]')"
 }
 
