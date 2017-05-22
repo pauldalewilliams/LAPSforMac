@@ -89,13 +89,13 @@ fi
 # 3. Has at least one number, symbol, uppercase letter, and lowercase letter
 # This ensures it will meet complexity requirements for passcodes.
 RandPass () {
-    echo "$(LC_ALL=C tr -dc 'A-Za-z0-9!@#&_=' </dev/urandom |
+    echo "$(LC_ALL=C tr -dc 'A-Za-z0-9!@#_=' </dev/urandom |
     tr -d 'O0l1L' | head -c $passLength |
     grep -Ev '(.)\1+' |
     grep -iv 'abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn' |
     grep -iv 'mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz' |
     grep -v '012|123|234|345|456|567|678|789' |
-    grep '[0-9]' | grep '[!@$&_=,]' | grep '[A-Z]' | grep '[a-z]')"
+    grep '[0-9]' | grep '[!@$_=,]' | grep '[A-Z]' | grep '[a-z]')"
 }
 
 # Keep generating passwords until we get one that passes the requirements
