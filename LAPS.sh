@@ -94,7 +94,10 @@ RandPass () {
     grep -Ev '(.)\1+' |
     grep -iv 'abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn' |
     grep -iv 'mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz' |
+    grep -iv 'zyx|yxw|xwv|wvu|vut|uts|tsr|srq|rqp|qpo|pon|onm' |
+    grep -iv 'nml|mlk|lkj|kji|jih|ihg|hgf|gfe|fed|edc|dcb|cba' |
     grep -v '012|123|234|345|456|567|678|789' |
+    grep -v '987|876|765|654|543|432|321|210' |
     grep '[0-9]' | grep '[!@#_=]' | grep '[A-Z]' | grep '[a-z]')"
 }
 
