@@ -41,9 +41,6 @@
 #
 ####################################################################################################
 
-# TODO:  Remove support for FileVault authorization and create account in this script as a hidden user
-# See here:  https://www.jamf.com/jamf-nation/discussions/6438/best-way-to-create-hidden-admin-account
-
 # HARDCODED VALUES SET HERE
 apiURL="https://jss.unl.edu:8443"
 LogLocation="/Library/Logs/Casper_LAPS.log"
@@ -52,8 +49,7 @@ apiPass=""
 LAPSuser=""
 LAPSuserDisplay=""
 newPass=""
-LAPSaccountEvent=""
-LAPSaccountEventFVE=""
+hideLAPSuser=""
 LAPSrunEvent=""
 
 # CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 4 AND, IF SO, ASSIGN TO "apiUser"
@@ -81,19 +77,14 @@ if [ "$8" != "" ] && [ "$newPass" == "" ]; then
     newPass=$8
 fi
 
-# CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 9 AND, IF SO, ASSIGN TO "LAPSaccountEvent"
-if [ "$9" != "" ] && [ "$LAPSaccountEvent" == "" ]; then
-    LAPSaccountEvent=$9
+# CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 9 AND, IF SO, ASSIGN TO "hideLAPSuser"
+if [ "${9}" != "" ] && [ "$hideLAPSuser" == "" ]; then
+    hideLAPSuser="${9}"
 fi
 
-# CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 10 AND, IF SO, ASSIGN TO "LAPSaccountEventFVE"
-if [ "${10}" != "" ] && [ "$LAPSaccountEventFVE" == "" ]; then
-    LAPSaccountEventFVE="${10}"
-fi
-
-# CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 11 AND, IF SO, ASSIGN TO "LAPSrunEvent"
-if [ "${11}" != "" ] && [ "$LAPSrunEvent" == "" ]; then
-    LAPSrunEvent="${11}"
+# CHECK TO SEE IF A VALUE WAS PASSED IN PARAMETER 10 AND, IF SO, ASSIGN TO "LAPSrunEvent"
+if [ "${10}" != "" ] && [ "$LAPSrunEvent" == "" ]; then
+    LAPSrunEvent="${10}"
 fi
 
 ####################################################################################################
@@ -105,7 +96,6 @@ fi
 udid=$(/usr/sbin/system_profiler SPHardwareDataType | /usr/bin/awk '/Hardware UUID:/ { print $3 }')
 xmlString="<?xml version=\"1.0\" encoding=\"UTF-8\"?><computer><extension_attributes><extension_attribute><name>LAPS</name><value>$newPass</value></extension_attribute></extension_attributes></computer>"
 extAttName="\"LAPS\""
-FVEstatus=$(fdesetup status | grep -w "FileVault is" | awk '{print $3}' | sed 's/[.]//g')
 
 # Logging Function for reporting actions
 ScriptLogging(){
@@ -174,16 +164,14 @@ if [ "$(CheckPass)" == ""]; then
     exit 1
 fi
 
-if [ "$LAPSaccountEvent" == "" ]; then
-    ScriptLogging "Error:  The parameter 'LAPS Account Event' is blank.  Please specify a Custom LAPS Account Event."
-    echo "Error:  The parameter 'LAPS Account Event' is blank.  Please specify a Custom LAPS Account Event."
+if [ "$hideLAPSuser" == "" ]; then
+    ScriptLogging "Error:  The parameter 'Hide LAPS User' is blank.  Please specify a 0 to show the user or a 1 to hide the user."
+    echo "Error:  The parameter 'Hide LAPS User' is blank.  Please specify a 0 to show the user or a 1 to hide the user."
     ScriptLogging "======== Aborting LAPS Account Creation ========"
     exit 1
-fi
-
-if [ "$LAPSaccountEventFVE" == "" ]; then
-    ScriptLogging "Error:  The parameter 'LAPS Account Event FVE' is blank.  Please specify a Custom LAPS Account Event."
-    echo "Error:  The parameter 'LAPS Account Event FVE' is blank.  Please specify a Custom FVE LAPS Account Event."
+elif [ "$hideLAPSuser" != "0" ] && [ "$hideLAPSuser" != "1" ]; then
+    ScriptLogging "Error:  The parameter 'Hide LAPS User' is invalid.  Please specify a 0 to show the user or a 1 to hide the user."
+    echo "Error:  The parameter 'Hide LAPS User' is invalid.  Please specify a 0 to show the user or a 1 to hide the user."
     ScriptLogging "======== Aborting LAPS Account Creation ========"
     exit 1
 fi
@@ -230,15 +218,13 @@ ScriptLogging "JAMF Binary is $jamf_binary"
 CreateLAPSaccount (){
     ScriptLogging "Creating LAPS Account..."
     echo "Creating LAPS Account..."
-    if [ "$FVEstatus" == "Off" ]; then
-        $jamf_binary policy -event $LAPSaccountEvent
-        ScriptLogging "LAPS Account Created..."
-        echo "LAPS Account Created..."
-    else
-        $jamf_binary policy -event $LAPSaccountEventFVE
-        ScriptLogging "LAPS Account Created with FVE..."
-        echo "LAPS Account Created with FVE..."
+    if [ "$hideLAPSuser" == "0" ]; then
+        $jamf_binary createAccount -username $LAPSuser -realname $LAPSuserDisplay -password $newPass
+    elif [ "$hideLAPSuser" == "1" ]; then
+        $jamf_binary createAccount -username $LAPSuser -realname $LAPSuserDisplay -password $newPass -hiddenUser
     fi
+    ScriptLogging "LAPS Account Created..."
+    echo "LAPS Account Created..."
 }
 
 # Update the LAPS Extention Attribute
@@ -247,38 +233,10 @@ UpdateAPI (){
     /usr/bin/curl -s -f -u ${apiUser}:${apiPass} -X PUT -H "Content-Type: text/xml" -d "${xmlString}" "${apiURL}/JSSResource/computers/udid/$udid"
 }
 
-# Check to see if the account is authorized with FileVault 2
-FVEcheck (){
-    userCheck=`fdesetup list | awk -v usrN="$LAPSuserDisplay" -F, 'index($0, usrN) {print $1}'`
-        if [ "${userCheck}" == "${LAPSuserDisplay}" ]; then
-            ScriptLogging "$LAPSuserDisplay is enabled for FileVault 2."
-            echo "$LAPSuserDisplay is enabled for FileVault 2."
-        else
-            ScriptLogging "Error: $LAPSuserDisplay is not enabled for FileVault 2."
-            echo "Error: $LAPSuserDispaly is not enabled for FileVault 2."
-        fi
-}
-
-# If FileVault Encryption is enabled, verify account.
-FVEverify (){
-    ScriptLogging "Checking FileVault Status..."
-    echo "Checking FileVault Status..."
-    if [ "$FVEstatus" == "On" ]; then
-        ScriptLogging "FileVault is enabled, checking $LAPSuserDisplay..."
-        echo "FileVault is enabled, checking $LAPSuserDisplay..."
-        FVEcheck
-    else
-        ScriptLogging "FileVault is not enabled."
-        echo "FileVault is not enabled."
-    fi
-}
-
-
 CheckBinary
 UpdateAPI
 CreateLAPSaccount
 UpdateAPI
-FVEverify
 
 ScriptLogging "======== LAPS Account Creation Complete ========"
 echo "LAPS Account Creation Finished."
