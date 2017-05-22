@@ -5,7 +5,7 @@ Local Administrator Password Solution for Mac
 
 Original Notes:
 
-	We needed a way to securely manage local admin accounts on our Macs so we developed this system to complement Microsft LAPS, used by our Windows colleagues. As currently designed, this solution creates a local Admin account on every Mac enrolled into Casper and stores the account password in the Mac's inventory record as an Extension Attribute. On a specified interval Casper will then randomize the local Admin account password going forward.
+> We needed a way to securely manage local admin accounts on our Macs so we developed this system to complement Microsft LAPS, used by our Windows colleagues. As currently designed, this solution creates a local Admin account on every Mac enrolled into Casper and stores the account password in the Mac's inventory record as an Extension Attribute. On a specified interval Casper will then randomize the local Admin account password going forward.
 
 Current Notes:
 
