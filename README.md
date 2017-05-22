@@ -143,20 +143,19 @@ The current version of the LAPS script is available [here](https://github.com/un
 
 ```LogLocation``` Put the preferred location of the log file for this script. If you don't have a preference, using the default setting of ```/Library/Logs/Casper_Laps.log``` should be fine.  
 
-```newPass``` This function controls the randomized password string. If you don't have a preference, the default should be fine for your environment.
+```RandPass``` This function controls the randomized password string. If you don't have a preference, the default should be fine for your environment.
 
-*The diagram below details how the newPass function works, if you wish to modify the password string.*
+*Details on how the RandPass function works, if you wish to modify the password string.*
 
-		   ┌─── openssl is used to create 
-		   │	  a random Base64 string
-		   │		      ┌── remove ambiguous characters
-		   │	              │
-	┌──────────┴──────────┐	  ┌───┴────────┐
-	openssl rand -base64 10 | tr -d OoIi1lLS | head -c12;echo
-						   └──────┬─────┘
-					   		  │
-	          prints the first 12 characters ─────────┘
-	          of the randomly generated string
+	RandPass () {
+    		echo "$(LC_ALL=C tr -dc 'A-Za-z0-9!@#&_=<>' </dev/urandom | # Get random characters within the specified character set
+    		tr -d 'O0l1L' | head -c $passLength | # Remove ambiguous characters, grab only the specified password length
+    		grep -Ev '(.)\1+' | # Check for repeat characters
+    		grep -iv 'abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn' | # Check for sequences of 3 or more
+    		grep -iv 'mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz' | # Check for sequences of 3 or more
+    		grep -v '012|123|234|345|456|567|678|789' | # Check for sequences of 3 or more
+    		grep '[0-9]' | grep '[!@$&_=<>,]' | grep '[A-Z]' | grep '[a-z]')" # Verify password contains at least one of each type
+	}
 
 		
 				
