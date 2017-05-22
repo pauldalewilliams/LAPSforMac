@@ -161,7 +161,7 @@ This policy randomizes the local admin accounts password after initial account c
 	Scope: All Computers
 	Trigger: 
 		Custom: runLAPS
-	Frequency: Once every day (Change this value to meet your institution's needs)
+	Frequency: Ongoing (Change this value to meet your institution's needs)
 	Scripts: LAPS Password Reset
 		Priority: After
 		Parameter Values
