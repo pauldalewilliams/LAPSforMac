@@ -233,9 +233,7 @@ if [ "$passwdB" == "" ]; then
     echo "New password for $resetUser is verified."
 else
     ScriptLogging "Error: Password reset for $resetUser was not successful!"
-    ScriptLogging "Failed password was: $newPass"
     echo "Error: Password reset for $resetUser was not successful!"
-    echo "Failed password was: $newPass"
     ScriptLogging "======== Aborting LAPS Update ========"
     exit 1
 fi
