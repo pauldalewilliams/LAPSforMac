@@ -152,15 +152,24 @@ fi
 CheckPass () {
     echo "$newPass" |
     grep -Ev '(.)\1+' |
-    grep -iv 'abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn' |
-    grep -iv 'mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz' |
-    grep -iv 'zyx|yxw|xwv|wvu|vut|uts|tsr|srq|rqp|qpo|pon|onm' |
-    grep -iv 'nml|mlk|lkj|kji|jih|ihg|hgf|gfe|fed|edc|dcb|cba' |
-    grep -iv 'aba|bab|bcb|cbc|cdc|dcd|ded|ede|efe|fef|fgf|gfg' |
-    grep -iv 'ghg|hgh|hih|ihi|iji|jij|jkj|kjk|klk|lkl|lml|mlm' |
-    grep -iv 'mnm|nmn|non|ono|opo|pop|pqp|qpq|qrq|rqr|rsr|srs' |
-    grep -iv 'sts|tst|tut|utu|uvu|vuv|vwv|wvw|wxw|xwx|xyx|yxy' |
-    grep -iv 'yzy|zyz' |
+    grep -v 'abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn' |
+    grep -v 'mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz' |
+    grep -v 'zyx|yxw|xwv|wvu|vut|uts|tsr|srq|rqp|qpo|pon|onm' |
+    grep -v 'nml|mlk|lkj|kji|jih|ihg|hgf|gfe|fed|edc|dcb|cba' |
+    grep -v 'aba|bab|bcb|cbc|cdc|dcd|ded|ede|efe|fef|fgf|gfg' |
+    grep -v 'ghg|hgh|hih|ihi|iji|jij|jkj|kjk|klk|lkl|lml|mlm' |
+    grep -v 'mnm|nmn|non|ono|opo|pop|pqp|qpq|qrq|rqr|rsr|srs' |
+    grep -v 'sts|tst|tut|utu|uvu|vuv|vwv|wvw|wxw|xwx|xyx|yxy' |
+    grep -v 'yzy|zyz' |
+	grep -v 'ABC|BCD|CDE|DEF|EFG|FGH|GHI|HIJ|IJK|JKL|KLM|LMN' |
+    grep -v 'MNO|NOP|OPQ|PQR|QRS|RST|STU|TUV|UVW|VWX|WXY|XYZ' |
+    grep -v 'ZYX|YXW|XWV|WVU|VUT|UTS|TSR|SRQ|RQP|QPO|PON|ONM' |
+    grep -v 'NML|MLK|LKJ|KJI|JIH|IHG|HGF|GFE|FED|EDC|DCB|CBA' |
+    grep -v 'ABA|BAB|BCB|CBC|CDC|DCD|DED|EDE|EFE|FEF|FGF|GFG' |
+    grep -v 'GHG|HGH|HIH|IHI|IJI|JIJ|JKJ|KJK|KLK|LKL|LML|MLM' |
+    grep -v 'MNM|NMN|NON|ONO|OPO|POP|PQP|QPQ|QRQ|RQR|RSR|SRS' |
+    grep -v 'STS|TST|TUT|UTU|UVU|VUV|VWV|WVW|WXW|XWX|XYX|YXY' |
+    grep -v 'YZY|ZYZ' |
     grep -v '012|123|234|345|456|567|678|789' |
     grep -v '987|876|765|654|543|432|321|210' |
     grep -v '010|101|121|212|232|323|343|434|454' |
