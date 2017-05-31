@@ -126,6 +126,9 @@ udid=$(/usr/sbin/system_profiler SPHardwareDataType | /usr/bin/awk '/Hardware UU
 xmlString="<?xml version=\"1.0\" encoding=\"UTF-8\"?><computer><extension_attributes><extension_attribute><name>LAPS</name><value>${newPass}</value></extension_attribute></extension_attributes></computer>"
 extAttName="\"LAPS\""
 
+# perl function to handle special characters in curl requests
+function urlencode { perl -MURI::Escape -e 'print uri_escape shift, , q{^A-Za-z0-9\-._~/:}' -- "$1"; }
+
 # Logging Function for reporting actions
 ScriptLogging(){
 
@@ -174,7 +177,7 @@ fi
 ScriptLogging "Parameters Verified."
 
 # Retrieve old password from JSS
-oldPass=$(curl -s -f -u $apiUser:$apiPass -H "Accept: application/xml" $apiURL/JSSResource/computers/udid/$udid/subset/extension_attributes | xpath "//extension_attribute[name=$extAttName]" 2>&1 | awk -F'<value>|</value>' '{print $2}')
+oldPass=$(curl -s -f -u $apiUser:"$(urlencode "${apiPass}")" -H "Accept: application/xml" $apiURL/JSSResource/computers/udid/$udid/subset/extension_attributes | xpath "//extension_attribute[name=$extAttName]" 2>&1 | awk -F'<value>|</value>' '{print $2}')
 
 # Identify the location of the jamf binary for the jamf_binary variable.
 CheckBinary (){
@@ -250,11 +253,11 @@ fi
 # Update the LAPS Extention Attribute
 UpdateAPI (){
 ScriptLogging "Recording new password for $resetUser into LAPS."
-/usr/bin/curl -s -u ${apiUser}:${apiPass} -X PUT -H "Content-Type: text/xml" -d "${xmlString}" "${apiURL}/JSSResource/computers/udid/$udid"
+/usr/bin/curl -s -u ${apiUser}:"$(urlencode "${apiPass}")" -X PUT -H "Content-Type: text/xml" -d "${xmlString}" "${apiURL}/JSSResource/computers/udid/$udid"
 
 sleep 1
 
-LAPSpass=$(curl -s -f -u $apiUser:$apiPass -H "Accept: application/xml" $apiURL/JSSResource/computers/udid/$udid/subset/extension_attributes | xpath "//extension_attribute[name=$extAttName]" 2>&1 | awk -F'<value>|</value>' '{print $2}')
+LAPSpass=$(curl -s -f -u $apiUser:"$(urlencode "${apiPass}")" -H "Accept: application/xml" $apiURL/JSSResource/computers/udid/$udid/subset/extension_attributes | xpath "//extension_attribute[name=$extAttName]" 2>&1 | awk -F'<value>|</value>' '{print $2}')
 
 ScriptLogging "Verifying LAPS password for $resetUser."
 passwdC=`dscl /Local/Default -authonly $resetUser $LAPSpass`
