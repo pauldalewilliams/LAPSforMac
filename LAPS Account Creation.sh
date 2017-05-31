@@ -97,6 +97,9 @@ udid=$(/usr/sbin/system_profiler SPHardwareDataType | /usr/bin/awk '/Hardware UU
 xmlString="<?xml version=\"1.0\" encoding=\"UTF-8\"?><computer><extension_attributes><extension_attribute><name>LAPS</name><value>$newPass</value></extension_attribute></extension_attributes></computer>"
 extAttName="\"LAPS\""
 
+# perl function to handle special characters in curl requests
+function urlencode { perl -MURI::Escape -e 'print uri_escape shift, , q{^A-Za-z0-9\-._~/:}' -- "$1"; }
+
 # Logging Function for reporting actions
 ScriptLogging(){
 
@@ -250,7 +253,7 @@ CreateLAPSaccount (){
 # Update the LAPS Extention Attribute
 UpdateAPI (){
     ScriptLogging "Recording new password for $LAPSuser into LAPS."
-    /usr/bin/curl -s -f -u ${apiUser}:${apiPass} -X PUT -H "Content-Type: text/xml" -d "${xmlString}" "${apiURL}/JSSResource/computers/udid/$udid"
+    /usr/bin/curl -s -f -u ${apiUser}:"$(urlencode "${apiPass}")" -X PUT -H "Content-Type: text/xml" -d "${xmlString}" "${apiURL}/JSSResource/computers/udid/$udid"
 }
 
 CheckBinary
