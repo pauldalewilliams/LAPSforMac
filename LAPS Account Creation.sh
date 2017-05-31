@@ -161,7 +161,7 @@ CheckPass () {
     grep -v 'mnm|nmn|non|ono|opo|pop|pqp|qpq|qrq|rqr|rsr|srs' |
     grep -v 'sts|tst|tut|utu|uvu|vuv|vwv|wvw|wxw|xwx|xyx|yxy' |
     grep -v 'yzy|zyz' |
-	grep -v 'ABC|BCD|CDE|DEF|EFG|FGH|GHI|HIJ|IJK|JKL|KLM|LMN' |
+    grep -v 'ABC|BCD|CDE|DEF|EFG|FGH|GHI|HIJ|IJK|JKL|KLM|LMN' |
     grep -v 'MNO|NOP|OPQ|PQR|QRS|RST|STU|TUV|UVW|VWX|WXY|XYZ' |
     grep -v 'ZYX|YXW|XWV|WVU|VUT|UTS|TSR|SRQ|RQP|QPO|PON|ONM' |
     grep -v 'NML|MLK|LKJ|KJI|JIH|IHG|HGF|GFE|FED|EDC|DCB|CBA' |
