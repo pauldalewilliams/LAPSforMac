@@ -101,7 +101,7 @@ RandPass () {
     grep -v 'jkj|kjk|mnm|nmn|non|ono|opo|pop|pqp|qpq' |
     grep -v 'qrq|rqr|rsr|srs|sts|tst|tut|utu|uvu|vuv' |
     grep -v 'vwv|wvw|wxw|xwx|xyx|yxy|yzy|zyz' |
-	grep -v 'ABC|BCD|CDE|DEF|EFG|FGH|GHI|HIJ|IJK|PQR' |
+    grep -v 'ABC|BCD|CDE|DEF|EFG|FGH|GHI|HIJ|IJK|PQR' |
     grep -v 'QRS|RST|STU|TUV|UVW|VWX|WXY|XYZ|ZYX|YXW' |
     grep -v 'XWV|WVU|VUT|UTS|TSR|SRQ|RQP|KJI|JIH|IHG' |
     grep -v 'HGF|GFE|FED|EDC|DCB|CBA|ABA|BAB|BCB|CBC' |
@@ -109,7 +109,7 @@ RandPass () {
     grep -v 'HIH|IHI|IJI|JIJ|JKJ|KJK|MNM|NMN|PQP|QPQ' |
     grep -v 'QRQ|RQR|RSR|SRS|STS|TST|TUT|UTU|UVU|VUV' |
     grep -v 'VWV|WVW|WXW|XWX|XYX|YXY|YZY|ZYZ' |
-	grep -v '234|345|456|567|678|789' |
+    grep -v '234|345|456|567|678|789' |
     grep -v '987|876|765|654|543|432' |
     grep -v '232|323|343|434|454|545|565' |
     grep -v '656|676|767|787|878|898|989' |
