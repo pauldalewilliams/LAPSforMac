@@ -241,9 +241,9 @@ CreateLAPSaccount (){
     ScriptLogging "Creating LAPS Account..."
     echo "Creating LAPS Account..."
     if [ "$hideLAPSuser" == "0" ]; then
-        $jamf_binary createAccount -username $LAPSuser -realname $LAPSuserDisplay -password $newPass -suppressSetupAssistant -admin
+        $jamf_binary createAccount -username "$LAPSuser" -realname "$LAPSuserDisplay" -password "$newPass" -suppressSetupAssistant -admin
     elif [ "$hideLAPSuser" == "1" ]; then
-        $jamf_binary createAccount -username $LAPSuser -realname $LAPSuserDisplay -password $newPass -suppressSetupAssistant -admin
+        $jamf_binary createAccount -username "$LAPSuser" -realname "$LAPSuserDisplay" -password "$newPass" -suppressSetupAssistant -admin
         dscl . -create /Users/$LAPSuser IsHidden 1
     fi
     ScriptLogging "LAPS Account Created..."
@@ -265,6 +265,6 @@ ScriptLogging "======== LAPS Account Creation Complete ========"
 echo "LAPS Account Creation Finished."
 
 # Run LAPS Password Randomization
-$jamf_binary policy -event $LAPSrunEvent
+$jamf_binary policy -event "$LAPSrunEvent"
 
 exit 0
